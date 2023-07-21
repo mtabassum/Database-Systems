@@ -1,0 +1,37 @@
+1. SELECT sub.CategoryName as SubjectName from db_subject  sub JOIN db_book  book   on book.SubjectID = sub.SubjectID JOIN db_supplier  supp  on book. SupplierID =supp.SupplierID  where supp.CompanyName = 'supplier2';
+
+2. SELECT B.Title, B.UnitPrice From db_book B, db_supplier Supp Where B.SupplierID = Supp.SupplierID AND B.UnitPrice = (select MAX(B2.UnitPrice) From db_book B2, db_supplier Supp2 Where B2.SupplierID = Supp2.SupplierID AND B2.UnitPrice AND Supp2.CompanyName = "Supplier3");
+
+3. SELECT Distinct (db_book.Title) from db_book JOIN db_order_detail on db_book.BookID = db_order_detail.BookID JOIN db_order on db_order_detail.OrderID = db_order.OrderID JOIN db_customer on db_order.CustomerID = db_customer.CustomerID WHERE db_customer.FirstName = 'firstname1'  AND db_customer.LastName ='lastname1' ;
+
+4. Select title from db_book where quantity > 10;
+
+5. SELECT SUM(OD.Quantity*B.UnitPrice) as TotalPrice FROM db_book B, db_order_detail OD, db_order O, db_customer C WHERE OD.BookID = B.BookID AND O.OrderID = OD.OrderID AND C.CustomerID = O.CustomerID AND C.FirstName = 'firstname1' AND C.LastName='lastname1';
+
+6. SELECT FirstName, LastName from (SELECT SUM(db_book.UnitPrice*db_order_detail.Quantity) as TotalPrice , db_customer.LastName, db_customer.FirstName FROM db_book LEFT JOIN db_order_detail ON db_order_detail.BookID = db_book.BookID LEFT JOIN db_order ON db_order.OrderID = db_order_detail.OrderID LEFT JOIN db_customer ON db_customer.CustomerID = db_order.CustomerID GROUP BY db_order.CustomerID HAVING totalprice < 80) as temporary;
+
+7. SELECT  b.Title from db_book b join db_supplier s on b.SupplierID = s.SupplierID WHERE s.CompanyName = 'supplier2';
+
+8. SELECT db_customer.FirstName , db_customer.LastName , SUM(db_book.UnitPrice*db_order_detail.Quantity) as totalprice  FROM db_book JOIN db_order_detail ON db_order_detail.BookID = db_book.BookID JOIN db_order ON db_order.OrderID = db_order_detail.OrderID JOIN db_customer ON db_customer.CustomerID = db_order.CustomerID GROUP BY db_order.CustomerID ORDER BY TotalPrice DESC;
+
+9. SELECT B.Title, Shp.ShipperName FROM db_book B, db_shipper Shp, db_order O, db_order_detail OD WHERE B.BookID = OD.BookID AND OD.OrderID = O.OrderID AND O.ShipperID = Shp.ShipperID AND O.ShippedDate = '2016/08/04';
+
+10. SELECT x.Title from ( SELECT DISTINCT(db_book.Title) FROM db_book WHERE db_book.Title IN (SELECT db_book.Title FROM db_book LEFT JOIN db_order_detail ON db_order_detail.BookID = db_book.BookID LEFT JOIN db_order ON db_order.OrderID = db_order_detail.OrderID LEFT JOIN db_customer ON db_customer.CustomerID = db_order.CustomerID WHERE db_customer.LastName = 'lastname4' AND db_customer.FirstName = 'firstname4' )) as x JOIN ( SELECT DISTINCT(db_book.Title) FROM db_book WHERE db_book.Title IN (SELECT db_book.Title FROM db_book LEFT JOIN db_order_detail ON db_order_detail.BookID = db_book.BookID LEFT JOIN db_order ON db_order.OrderID = db_order_detail.OrderID LEFT JOIN db_customer ON db_customer.CustomerID = db_order.CustomerID WHERE db_customer.LastName = 'lastname1' AND db_customer.FirstName = 'firstname1' )) as y ON x.Title = y.Title;
+
+11. SELECT db_book.Title FROM db_book JOIN db_order_detail ON db_order_detail.BookID = db_book.BookID JOIN db_order ON db_order.OrderID = db_order_detail.OrderID JOIN db_employee ON db_employee.EmployeeID = db_order.EmployeeID WHERE db_employee.LastName = 'lastname6' AND db_employee.FirstName = 'firstname6';
+
+12. SELECT db_book.Title, SUM(db_order_detail.Quantity) totalquantities FROM db_book JOIN db_order_detail ON db_order_detail.BookID = db_book.BookID JOIN db_order ON db_order.OrderID = db_order_detail.OrderID GROUP BY db_order_detail.BookID ORDER BY totalquantities ASC;
+
+13. SELECT db_customer.FirstName, db_customer.LastName FROM db_book JOIN db_order_detail ON db_order_detail.BookID = db_book.BookID JOIN db_order ON db_order.OrderID = db_order_detail.OrderID JOIN db_customer ON db_customer.CustomerID = db_order.CustomerID GROUP BY  db_order.CustomerID HAVING SUM(db_order_detail.Quantity) >= 2;
+
+14. SELECT db_customer.FirstName, db_customer.LastName,  db_book.Title FROM db_book JOIN db_subject ON db_subject.SubjectID = db_book.SubjectID JOIN db_order_detail ON db_order_detail.BookID = db_book.BookID JOIN db_order ON db_order.OrderID = db_order_detail.OrderID JOIN db_customer ON db_customer.CustomerID = db_order.CustomerID WHERE (db_subject.CategoryName = 'category3' OR db_subject.CategoryName = 'category4') GROUP BY  db_order.CustomerID;
+
+15. SELECT db_customer.FirstName, db_customer.LastName FROM db_book JOIN db_order_detail ON db_order_detail.BookID = db_book.BookID JOIN db_order ON db_order.OrderID = db_order_detail.OrderID JOIN db_customer ON db_customer.CustomerID = db_order.CustomerID WHERE db_book.Author = 'author1' GROUP BY  db_order_detail.BookID, db_order.CustomerID HAVING SUM(db_order_detail.Quantity) >= 1;
+
+16. SELECT db_employee.FirstName, db_employee.LastName, SUM(db_book.UnitPrice*db_order_detail.Quantity) AS PriceOfOrder FROM db_order_detail JOIN db_book ON db_book.BookID = db_order_detail.BookID JOIN db_order ON db_order.OrderID = db_order_detail.OrderID JOIN db_employee ON db_employee.EmployeeID = db_order.EmployeeID GROUP BY db_employee.EmployeeID;
+
+17. SELECT db_book.Title, SUM(db_order_detail.Quantity) as Total FROM db_book JOIN db_order_detail ON db_order_detail.BookID = db_book.BookID JOIN db_order ON db_order.OrderID = db_order_detail.OrderID JOIN db_shipper ON db_shipper.ShipperID = db_order.ShipperID WHERE db_order.ShippedDate > '2016-08-04' group by db_book.Title;
+
+18. SELECT db_customer.FirstName, db_customer.LastName ,  SUM(db_order_detail.Quantity) as  TotalOrder FROM db_book JOIN db_order_detail ON db_order_detail.BookID = db_book.BookID JOIN db_order ON db_order.OrderID = db_order_detail.OrderID JOIN db_customer ON db_customer.CustomerID = db_order.CustomerID GROUP BY db_customer.CustomerID HAVING TotalOrder > 1 ORDER by TotalOrder DESC;
+
+19. SELECT db_customer.FirstName, db_customer.LastName, db_customer.Phone,  SUM(db_order_detail.Quantity) TotalQuantities FROM db_book JOIN db_order_detail ON db_order_detail.BookID = db_book.BookID JOIN db_order ON db_order.OrderID = db_order_detail.OrderID JOIN db_customer ON db_customer.CustomerID = db_order.CustomerID GROUP BY  db_order.CustomerID HAVING TotalQuantities > 3;
